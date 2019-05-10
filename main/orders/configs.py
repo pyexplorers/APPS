@@ -1,5 +1,5 @@
 # Set PATH
-MAIN_PATH="D:\\ArunChandramouli\\code\\python\tests\\APPS\\main\\pytus"
+MAIN_PATH="D:\\ArunChandramouli\\code\\python\tests\\APPS\\main\\"
 JSON_FILE = 'records.json'
 MAX_ORDER_PER_ZIP = 10
 BASE_PRICE = 100

@@ -8,6 +8,7 @@ import sys
 import configs
 sys.path.append(configs.MAIN_PATH)
 from pytus.pyutils import read_json,write_json
+from exceptions.exceptions_errors import Order_Items_Missing,Invalid_Code
 
 # Define the ORDER Class to Process all the Orders
 class Orders:
@@ -22,8 +23,7 @@ class Orders:
 		self.order_verify = Order_Verify
 		self.records_file = configs.JSON_FILE
 		self.records = read_json(self.records_file)
-		self.max_order_count = configs.MAX_ORDER_PER_ZIP
-		self.price_final = configs.PRICES_ITEMS[self.items]
+		self.max_order_count = configs.MAX_ORDER_PER_ZIP		
 
 	def check_order(self):
 		'''
@@ -43,6 +43,8 @@ class Orders:
 			For a given item and zip-code, define a price.
 			Consider both normal and surge pricing.
 		'''
+		self.price_final = configs.PRICES_ITEMS[self.items]
+
 		check_pricing = Pricing.check(zip_code=self.zip_code,records=self.records,max_order_count=self.max_order_count)
 		if not bool(check_pricing):
 			self.price_final = self.price_final + configs.PRICES_ITEMS_SURGE[self.items]
@@ -90,15 +92,14 @@ class Order_Verify:
 		'''
 			Check for Valid Orders
 		'''
-		if not bool(kwargs.get('items')) or not bool(kwargs.get('zip_code')):
-			raise Exception("Not Enough information to process the order. Please define Items with proper zipcode")
+		if not bool(kwargs.get('items')) or str(kwargs.get('items')).strip()=='' or not bool(kwargs.get('zip_code')):
+			raise Order_Items_Missing()
 
 		if not len(str(kwargs.get('zip_code'))) == 6:
-			raise Exception("Zip Code must contain 6 digits . Please enter a Valid zipcode")
-
+			raise Invalid_Code()
 		return True
 
 if __name__ == "__main__":
 
-	orders = Orders(items='idly',zip_code='600115')
+	orders = Orders(items=' ',zip_code='600111')
 	print(orders())
